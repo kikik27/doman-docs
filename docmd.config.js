@@ -2,7 +2,7 @@
 export default defineConfig({
   // --- Core Metadata ---
   title: 'DOMAN Docs',
-  url: '',
+  url: 'https://doman-docs.vercel.app',
 
   // --- Branding ---
   logo: {
