@@ -19,7 +19,7 @@ export default defineConfig({
 
   // --- Layout & UI Architecture ---
   layout: {
-    spa: true,
+    spa: false,
     header: {
       enabled: true,
     },
