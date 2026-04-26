@@ -6,12 +6,12 @@ export default defineConfig({
 
   // --- Branding ---
   logo: {
-    light: 'assets/images/logo.png',
+    light: 'assets/images/icon.png',
     dark: 'assets/images/logo.png',
     alt: 'DOMAN — Web3 Security & Decision Engine',
     href: '/',
   },
-  favicon: 'assets/favicon.ico',
+  favicon: 'assets/favicon.png',
 
   // --- Source & Output ---
   src: 'docs',
