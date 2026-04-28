@@ -9,6 +9,36 @@ The `ScamReporter` contract is the on-chain integrity anchor for DOMAN's communi
 
 ---
 
+## Contract Internal Flow
+
+```mermaid
+graph TD
+    Caller["Caller (User / Extension)"]
+    SV["submitVote()"]
+    SR["submitReport()<br/><i>Deprecated</i>"]
+    HV["hasVoted()"]
+    AT["addressToTargetId()"]
+
+    Validate["Validate Inputs"]
+    CheckDouble["Check Double Vote"]
+    Emit["Emit Event"]
+    Store["Update Mapping"]
+
+    Caller --> SV
+    Caller --> SR
+    Caller --> HV
+    Caller --> AT
+
+    SV --> Validate
+    Validate -->|"targetId ≠ 0<br/>reasonHash ≠ 0<br/>targetType ≤ 2"| CheckDouble
+    CheckDouble -->|"!hasVoted"| Emit
+    Emit --> Store
+    CheckDouble -->|"AlreadyVoted"| Revert1["REVERT<br/>AlreadyVoted()"]
+    Validate -->|"Invalid inputs"| Revert2["REVERT<br/>EmptyTargetId() /<br/>EmptyReasonHash() /<br/>InvalidTargetType()"]
+```
+
+---
+
 ## Key Features
 
 - **Target-scoped voting** — Reports are tied to a specific target (address, ENS, or domain) via a `targetId` hash.
@@ -25,6 +55,14 @@ The `ScamReporter` contract is the on-chain integrity anchor for DOMAN's communi
 | `0` | `ADDRESS` | Wallet or contract address on Base |
 | `1` | `ENS` | ENS name (e.g. `scammer.eth`) |
 | `2` | `DOMAIN` | Web domain (e.g. `phishing-site.com`) |
+
+```mermaid
+graph LR
+    Target["Target Identifier"] -->|"address"| Hash["keccak256()"]
+    Target -->|"ENS name"| Hash
+    Target -->|"domain"| Hash
+    Hash --> TargetId["bytes32 targetId"]
+```
 
 ---
 
@@ -91,6 +129,26 @@ event ScamReportSubmitted(
 ```
 
 Emitted by the legacy `submitReport` method.
+
+### Event Consumption
+
+```mermaid
+graph TD
+    Contract["ScamReporter.sol"]
+    Vote["ScamVoteSubmitted"]
+    Report["ScamReportSubmitted"]
+    Ponder["Ponder Indexer"]
+    Dashboard["DOMAN Dashboard"]
+    Explorer["BaseScan"]
+
+    Contract -->|"on submitVote()"| Vote
+    Contract -->|"on submitReport()"| Report
+    Vote --> Ponder
+    Vote --> Explorer
+    Report --> Ponder
+    Report --> Explorer
+    Ponder -->|"Store to DB"| Dashboard
+```
 
 ---
 

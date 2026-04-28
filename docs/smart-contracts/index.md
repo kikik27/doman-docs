@@ -23,15 +23,48 @@ On-chain scam reporting and community voting contracts for the **DOMAN** platfor
 
 All report data lives off-chain (Supabase). The smart contract acts as an **integrity anchor** — it proves that a given `(reporter, reasonHash, isScam)` triple was witnessed by the chain at a specific block.
 
+```mermaid
+graph TD
+    subgraph Client["Client Layer"]
+        Dashboard["DOMAN Dashboard"]
+        Extension["Browser Extension"]
+    end
+
+    subgraph Chain["On-chain (Base Sepolia)"]
+        Contract["ScamReporter.sol"]
+    end
+
+    subgraph Offchain["Off-chain"]
+        Supabase["Supabase<br/>(PostgreSQL)"]
+        Indexer["Ponder Indexer"]
+    end
+
+    Dashboard -->|"submitVote()"| Contract
+    Extension -->|"submitVote()"| Contract
+    Dashboard -->|"Store full payload"| Supabase
+    Contract -->|"ScamVoteSubmitted event"| Indexer
+    Indexer -->|"Sync on-chain data"| Supabase
+    Supabase -.->|"Verify keccak256<br/>matches reasonHash"| Contract
 ```
-┌──────────────────┐     ┌──────────────────────┐     ┌─────────────┐
-│   DOMAN Dashboard │────▶│   ScamReporter.sol    │────▶│   Supabase  │
-│   / Extension     │     │   (Base Chain)        │     │   (Off-chain│
-│                   │◀────│                       │◀────│    Data)    │
-└──────────────────┘     └──────────────────────┘     └─────────────┘
-        │                         │
-        │    submitVote()         │   ScamVoteSubmitted event
-        └─────────────────────────┘   (indexed by Ponder / indexer)
+
+### Report Lifecycle
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend as DOMAN Frontend
+    participant Contract as ScamReporter.sol
+    participant Indexer as Ponder Indexer
+    participant DB as Supabase
+
+    User->>Frontend: Submit scam report
+    Frontend->>Contract: submitVote(targetType, targetId, reasonHash, isScam)
+    Contract->>Contract: Validate (no double vote, valid target)
+    Contract-->>Frontend: Emit ScamVoteSubmitted
+    Frontend->>DB: Store full reason payload
+    Indexer->>Contract: Detect ScamVoteSubmitted event
+    Indexer->>DB: Insert indexed vote + update user stats
+    Note over DB: On-chain hash matches off-chain payload ✓
 ```
 
 1. **User** submits a report via DOMAN Dashboard or Extension.
