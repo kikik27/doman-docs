@@ -9,6 +9,8 @@ Blockchain indexer service for the **ScamReporter** smart contract on Base Sepol
 
 Built with [Ponder](https://ponder.sh/) — a TypeScript-based blockchain indexing framework.
 
+**Live API:** [https://doman-indexer.up.railway.app](https://doman-indexer.up.railway.app)
+
 > The indexer is the bridge between on-chain events and off-chain queries. It ensures every `ScamVoteSubmitted` and `ScamReportSubmitted` event is captured, stored, and queryable in real time.
 
 ---

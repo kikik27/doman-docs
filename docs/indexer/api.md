@@ -17,7 +17,8 @@ The indexer exposes a Hono-based API server with two query interfaces: **GraphQL
 | `/` | POST | GraphQL endpoint (alias) |
 | `/sql/:table` | GET | Direct SQL table query |
 
-The API runs on port `42069` by default.
+**Production:** [https://doman-indexer.up.railway.app](https://doman-indexer.up.railway.app)
+**Local:** `http://localhost:42069`
 
 ---
 
@@ -26,7 +27,7 @@ The API runs on port `42069` by default.
 ### Query Scam Votes
 
 ```bash
-curl -X POST http://localhost:42069/graphql \
+curl -X POST https://doman-indexer.up.railway.app/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ scamVotes { items { reporter targetId isScam } } }"}'
 ```
@@ -34,7 +35,7 @@ curl -X POST http://localhost:42069/graphql \
 ### Query Scam Reports
 
 ```bash
-curl -X POST http://localhost:42069/graphql \
+curl -X POST https://doman-indexer.up.railway.app/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ scamReports { items { reporter reasonHash isScam } } }"}'
 ```
@@ -42,7 +43,7 @@ curl -X POST http://localhost:42069/graphql \
 ### Query Users
 
 ```bash
-curl -X POST http://localhost:42069/graphql \
+curl -X POST https://doman-indexer.up.railway.app/graphql \
   -H "Content-Type: application/json" \
   -d '{"query": "{ users { items { address voteCount reportCount } } }"}'
 ```
@@ -64,19 +65,19 @@ The SQL endpoint provides direct table access for quick lookups and debugging.
 ### Query All Votes
 
 ```bash
-curl http://localhost:42069/sql/scam_vote
+curl https://doman-indexer.up.railway.app/sql/scam_vote
 ```
 
 ### Query All Reports
 
 ```bash
-curl http://localhost:42069/sql/scam_report
+curl https://doman-indexer.up.railway.app/sql/scam_report
 ```
 
 ### Query Users
 
 ```bash
-curl http://localhost:42069/sql/user
+curl https://doman-indexer.up.railway.app/sql/user
 ```
 
 ### Available Tables

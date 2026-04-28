@@ -87,6 +87,8 @@ npm run dev
 
 The indexer will start processing blocks from the configured start block and expose the API at `http://localhost:42069`.
 
+**Production URL:** [https://doman-indexer.up.railway.app](https://doman-indexer.up.railway.app)
+
 ```mermaid
 sequenceDiagram
     participant Dev as Developer
@@ -121,7 +123,7 @@ graph LR
     Railway --> Nixpacks["Nixpacks Build"]
     Nixpacks --> Ponder["npx ponder start"]
     Ponder --> DB["PostgreSQL<br/>(Railway add-on)"]
-    Ponder --> API["API :42069"]
+    Ponder --> API["doman-indexer.up.railway.app"]
 ```
 
 ### Recommended Railway Add-ons
